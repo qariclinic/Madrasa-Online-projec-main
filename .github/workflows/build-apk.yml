@@ -25,10 +25,9 @@ jobs:
         run: |
           npx @bubblewrap/cli@latest init --manifest ./manifest.json --applicationId com.example.madrasa --yes --jdk=17
 
-      - name: Build TWA
-        run: |
-          npx @bubblewrap/cli@latest build
-
+      - - name: Build TWA
+  run: |
+    npx @bubblewrap/cli@latest build --yes --skip-java-runtime-check
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
