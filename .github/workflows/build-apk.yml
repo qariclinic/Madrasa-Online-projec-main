@@ -1,7 +1,7 @@
 name: Build APK
 
 on:
-  workflow_dispatch:   # آپ Actions سے Manual Run کر سکیں گے
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'   # اپنی Flutter version ڈال دیں
+          flutter-version: '3.22.0'
 
       - name: Install dependencies
         run: flutter pub get
@@ -36,4 +36,3 @@ jobs:
         with:
           name: app-release
           path: build/app/outputs/flutter-apk/app-release.apk
-d/outputs/apk/release/*.apk
