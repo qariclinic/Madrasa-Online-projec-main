@@ -1,9 +1,10 @@
-name: Build Flutter APK
+name: Flutter Build CI
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -11,26 +12,30 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'   # یا جو ورژن آپ کے پروجیکٹ میں ہے
-
-      - name: Navigate to project
-        run: cd ./Madrasa-Online-projec-main
+          channel: stable
 
       - name: Install dependencies
         run: flutter pub get
-        working-directory: ./Madrasa-Online-projec-main
 
-      - name: Build APK (debug)
-        run: flutter build apk --debug
-        working-directory: ./Madrasa-Online-projec-main
+      - name: Build APK
+        run: flutter build apk --release
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: Build App Bundle (AAB)
+        run: flutter build appbundle --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: MadrasaOnlineApp
-          path: Madrasa-Online-projec-main/build/app/outputs/flutter-apk/app-debug.apk
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
