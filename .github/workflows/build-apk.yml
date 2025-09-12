@@ -1,37 +1,36 @@
-name: Build APK
+name: Build Flutter APK
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3' # اپنی Flutter ورژن یہاں لکھیں
+          flutter-version: 'stable'
 
+      # 👉 اصل فولڈر میں جائیں
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          cd Madrasa-Online-projec-main
+          flutter pub get
 
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build debug APK
+        run: |
+          cd Madrasa-Online-projec-main
+          flutter build apk --debug
 
-      - name: Upload a build artifact
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
-          path: dist/
+          name: app-debug
+          path: Madrasa-Online-projec-main/build/app/outputs/flutter-apk/app-debug.apk
