@@ -1,41 +1,63 @@
-name: Flutter Build CI
+name: Flutter CI/CD Build
 
+# یہ ورک فلو ہر بار جب 'main' برانچ پر کوئی کوڈ push ہوتا ہے تو چلے گا۔
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
+# GitHub Actions رنر کا انتخاب
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
+    # یہاں 'flutter_project_folder' کو اپنے پراجیکٹ کے نام سے تبدیل کریں۔
+    # اگر pubspec.yaml روٹ میں ہے تو اس لائن کو ہٹا دیں۔
+    env:
+      FLUTTER_PROJECT_PATH: flutter_project_folder 
+      
     steps:
-      - name: Checkout repository
+      - name: 📦 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Flutter
+      - name: ⚙️ Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          channel: 'stable'
 
-      - name: Install dependencies
+      - name: ✅ Check Flutter installation
+        run: flutter doctor -v
+        
+      - name: 🔍 Get dependencies (pub get)
         run: flutter pub get
+        # یہاں مسئلہ حل کیا گیا ہے: 'working-directory' کو پراجیکٹ فولڈر پر سیٹ کریں۔
+        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
+        
+      - name: 🧪 Run tests
+        run: flutter test
+        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
 
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Build App Bundle (AAB)
+      - name: 🏗️ Build Android App Bundle (AAB)
         run: flutter build appbundle --release
-
-      - name: Upload APK artifact
+        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
+        
+      # آپ APK بلڈ کرنے کا مرحلہ بھی شامل کر سکتے ہیں (اختیاری)
+      - name: 🏗️ Build Android APK
+        run: flutter build apk --release
+        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
+        
+      # بلڈ کی گئی فائلز کو آرٹیفیکٹ کے طور پر اپ لوڈ کریں
+      - name: 🚀 Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Upload AAB artifact
+          name: release-app-bundle
+          path: ${{ env.FLUTTER_PROJECT_PATH }}/build/app/outputs/bundle/release/app-release.aab
+          
+      - name: 🚀 Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
+          name: release-apk
+          path: ${{ env.FLUTTER_PROJECT_PATH }}/build/app/outputs/flutter-apk/app-release.apk
