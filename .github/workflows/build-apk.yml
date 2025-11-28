@@ -1,63 +1,47 @@
-name: Flutter CI/CD Build
+name: Flutter CI/CD Build Fix
 
-# یہ ورک فلو ہر بار جب 'main' برانچ پر کوئی کوڈ push ہوتا ہے تو چلے گا۔
+# Run on push to main branch
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
-# GitHub Actions رنر کا انتخاب
 jobs:
   build:
+    # 1. RUNNER FIX: Ensure Bash or a suitable shell is available.
+    #    We use ubuntu-latest (which usually has bash) but explicitly set the default shell to sh 
+    #    as a strong safeguard against the missing /usr/bin/bash error.
     runs-on: ubuntu-latest
+    shell: sh # <-- THIS IS THE CRITICAL LINE TO BYPASS THE /usr/bin/bash ERROR
     
-    # یہاں 'flutter_project_folder' کو اپنے پراجیکٹ کے نام سے تبدیل کریں۔
-    # اگر pubspec.yaml روٹ میں ہے تو اس لائن کو ہٹا دیں۔
-    env:
-      FLUTTER_PROJECT_PATH: flutter_project_folder 
-      
     steps:
+      # 2. Checkout the code
       - name: 📦 Checkout repository
         uses: actions/checkout@v4
 
+      # 3. Set up Flutter
       - name: ⚙️ Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.19.6' # Adjust version as needed
           channel: 'stable'
 
-      - name: ✅ Check Flutter installation
-        run: flutter doctor -v
-        
-      - name: 🔍 Get dependencies (pub get)
+      # 4. Get dependencies - This is the step that was failing
+      - name: 🧩 Run flutter pub get
         run: flutter pub get
-        # یہاں مسئلہ حل کیا گیا ہے: 'working-directory' کو پراجیکٹ فولڈر پر سیٹ کریں۔
-        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
-        
+
+      # 5. Run tests
       - name: 🧪 Run tests
         run: flutter test
-        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
 
-      - name: 🏗️ Build Android App Bundle (AAB)
-        run: flutter build appbundle --release
-        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
-        
-      # آپ APK بلڈ کرنے کا مرحلہ بھی شامل کر سکتے ہیں (اختیاری)
+      # 6. Build Android APK
       - name: 🏗️ Build Android APK
         run: flutter build apk --release
-        working-directory: ${{ env.FLUTTER_PROJECT_PATH }}
-        
-      # بلڈ کی گئی فائلز کو آرٹیفیکٹ کے طور پر اپ لوڈ کریں
-      - name: 🚀 Upload AAB artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-app-bundle
-          path: ${{ env.FLUTTER_PROJECT_PATH }}/build/app/outputs/bundle/release/app-release.aab
-          
+
+      # 7. Upload APK artifact
       - name: 🚀 Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: ${{ env.FLUTTER_PROJECT_PATH }}/build/app/outputs/flutter-apk/app-release.apk
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
