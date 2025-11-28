@@ -1,0 +1,46 @@
+# یہ فائل آپ کے پروجیکٹ کی سیٹنگز اور ڈیپنڈینسیز کو کنٹرول کرتی ہے۔
+name: madrasa_online_project # یہاں آپ اپنے پروجیکٹ کا نام لکھیں
+description: A new Flutter project. # یہاں آپ اپنے پروجیکٹ کی مختصر تفصیل لکھیں
+publish_to: 'none' # یہ یقینی بناتا ہے کہ آپ اس پیکیج کو پبلش نہ کریں۔
+
+version: 1.0.0+1
+
+environment:
+  # Flutter SDK کی کم سے کم درکار ورزن یہاں بتائیں۔
+  sdk: '>=3.0.0 <4.0.0' 
+
+dependencies:
+  # Flutter کے اپنے وِجٹس (widgets) کو استعمال کرنے کے لیے۔
+  flutter:
+    sdk: flutter
+
+  # آئیکنز (icons) کے لیے جو مٹیریل ڈیزائن گائیڈلائنز کا حصہ ہیں۔
+  cupertino_icons: ^1.0.2
+  
+  # یہاں آپ اپنی استعمال کی جانے والی دوسری ڈیپنڈینسیز (جیسے http, provider, shared_preferences) شامل کر سکتے ہیں۔
+  # مثال:
+  # http: ^1.1.0
+  # provider: ^6.0.5
+
+dev_dependencies:
+  # ٹیسٹنگ کے لیے یہ دونوں عام طور پر ضروری ہیں۔
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+# === FLUTTER سیٹنگز ===
+flutter:
+
+  # assets: پروجیکٹ میں تصاویر، فونٹس یا دیگر فائلیں شامل کرنے کے لیے۔
+  # یہاں آپ assets فولڈر کے پاتھس بتاتے ہیں۔
+  # assets:
+  #   - assets/images/
+  #   - assets/data/
+
+  # fonts: کسٹم (custom) فونٹس استعمال کرنے کے لیے۔
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: assets/fonts/Roboto-Regular.ttf
+  #       - asset: assets/fonts/Roboto-Bold.ttf
+  #         weight: 700
