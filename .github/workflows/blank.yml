@@ -1,63 +1,17 @@
-name: Flutter CI/CD Build
+steps:
+      # ... (پچھلے steps جیسے Checkout اور Set up Flutter)
 
-# یہ ورک فلو ہر دفعہ جب آپ main برانچ پر کوڈ push کریں گے تو چلے گا۔
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-jobs:
-  build:
-    # 1. یہ سب سے اہم حصہ ہے جو آپ کے پہلے ایرر کو حل کرتا ہے: 
-    #   'runs-on: ubuntu-latest' یقینی بناتا ہے کہ Bash شیل (shell) موجود ہو۔
-    runs-on: ubuntu-latest
-    
-    steps:
-      # 2. کوڈ کو چیک آؤٹ کریں
-      - name: 📦 Checkout repository
-        uses: actions/checkout@v4
-
-      # 3. Flutter کو سیٹ اپ کریں
-      #   یہ ایکشن Flutter SDK کو انسٹال کرتا ہے۔
-      - name: ⚙️ Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.6' # اپنی مطلوبہ Flutter ورزن یہاں لکھیں
-          channel: 'stable'
-
-      # 4. ڈیپنڈینسیز حاصل کریں
-      #   'flutter pub get' کمانڈ چلاتا ہے۔
+      # تمام Flutter کمانڈز کو ورکنگ ڈائریکٹری میں چلائیں
       - name: 🧩 Run flutter pub get
         run: flutter pub get
+        working-directory: ./flutter_project_folder # اگر پروجیکٹ یہاں ہے
 
-      # 5. کوڈ کی لِنٹنگ (Linting) اور فارمیٹنگ چیک کریں
-      - name: 🔎 Analyze code
-        run: flutter analyze
-
-      # 6. اگر آپ کے پروجیکٹ میں ٹیسٹ ہیں تو انہیں چلائیں
       - name: 🧪 Run tests
         run: flutter test
+        working-directory: ./flutter_project_folder # <--- یہاں بھی یہ لائن شامل کریں
 
-      # 7. Android APK بلڈ کریں (Release)
       - name: 🏗️ Build Android APK
         run: flutter build apk --release
-
-      # 8. آرٹیفیکٹ (APK فائل) کو محفوظ کریں
-      #   تاکہ آپ اسے GitHub سے ڈاؤن لوڈ کر سکیں۔
-      - name: 🚀 Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-
-      # (اختیاری) Android App Bundle (AAB) بلڈ کریں
-      - name: 🏗️ Build Android App Bundle (AAB)
-        run: flutter build appbundle --release
-
-      # (اختیاری) AAB آرٹیفیکٹ کو محفوظ کریں
-      - name: 🚀 Upload AAB artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
+        working-directory: ./flutter_project_folder # اور یہاں بھی
+      
+      # ... (باقی steps)
