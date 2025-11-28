@@ -1,6 +1,5 @@
 name: Flutter CI/CD Build Fix
 
-# Run on push to main branch
 on:
   push:
     branches: [ "main" ]
@@ -9,11 +8,9 @@ on:
 
 jobs:
   build:
-    # 1. RUNNER FIX: Ensure Bash or a suitable shell is available.
-    #    We use ubuntu-latest (which usually has bash) but explicitly set the default shell to sh 
-    #    as a strong safeguard against the missing /usr/bin/bash error.
+    # 1. RUNNER FIX: 'runs-on' اور 'shell' ایک ہی لیول پر ہیں۔
     runs-on: ubuntu-latest
-    shell: sh # <-- THIS IS THE CRITICAL LINE TO BYPASS THE /usr/bin/bash ERROR
+    shell: sh # <--- یہ اب درست جگہ پر ہے۔
     
     steps:
       # 2. Checkout the code
@@ -24,16 +21,17 @@ jobs:
       - name: ⚙️ Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6' # Adjust version as needed
+          flutter-version: '3.19.6' 
           channel: 'stable'
 
-      # 4. Get dependencies - This is the step that was failing
+      # 4. Get dependencies 
       - name: 🧩 Run flutter pub get
         run: flutter pub get
 
-      # 5. Run tests
+      # 5. Run tests - اگر ٹیسٹ ڈائریکٹری کا مسئلہ ہو تو working-directory شامل کریں۔
       - name: 🧪 Run tests
         run: flutter test
+        # working-directory: ./flutter_project_folder # اگر آپ کا پروجیکٹ سب فولڈر میں ہے تو یہ لائن یہاں شامل کریں۔
 
       # 6. Build Android APK
       - name: 🏗️ Build Android APK
@@ -44,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk # پورا path دینا ضروری ہے
