@@ -8,38 +8,31 @@ on:
 
 jobs:
   build:
-    # 1. RUNNER FIX: 'runs-on' اور 'shell' ایک ہی لیول پر ہیں۔
     runs-on: ubuntu-latest
-    shell: sh # <--- یہ اب درست جگہ پر ہے۔
+    # shell: sh # <-- اس لائن کو مکمل طور پر ہٹا دیا گیا ہے تاکہ ایرر فکس ہو جائے
     
     steps:
-      # 2. Checkout the code
       - name: 📦 Checkout repository
         uses: actions/checkout@v4
 
-      # 3. Set up Flutter
       - name: ⚙️ Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.6' 
           channel: 'stable'
 
-      # 4. Get dependencies 
       - name: 🧩 Run flutter pub get
         run: flutter pub get
 
-      # 5. Run tests - اگر ٹیسٹ ڈائریکٹری کا مسئلہ ہو تو working-directory شامل کریں۔
       - name: 🧪 Run tests
         run: flutter test
-        # working-directory: ./flutter_project_folder # اگر آپ کا پروجیکٹ سب فولڈر میں ہے تو یہ لائن یہاں شامل کریں۔
+        # working-directory: ./flutter_project_folder # اگر ضرورت ہو تو یہ شامل کریں
 
-      # 6. Build Android APK
       - name: 🏗️ Build Android APK
         run: flutter build apk --release
 
-      # 7. Upload APK artifact
       - name: 🚀 Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk # پورا path دینا ضروری ہے
+          path: build/app/outputs/flutter-apk/app-release.apk
